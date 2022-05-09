@@ -13,6 +13,8 @@ using StringTools;
 
 class Note extends FlxSprite
 {
+	public static var noteSkin:NoteSkin;
+
 	public var strumTime:Float = 0;
 
 	public var mustPress:Bool = false;
@@ -198,4 +200,26 @@ class Note extends FlxSprite
 				alpha = 0.3;
 		}
 	}
+}
+
+typedef NoteSkin =
+{
+	var notePath:String;
+	var left:NoteGraphicSkin;
+	var down:NoteGraphicSkin;
+	var up:NoteGraphicSkin;
+	var right:NoteGraphicSkin;
+
+	var strumPath:String;
+	var leftStrum:NoteGraphicSkin;
+	var downStrum:NoteGraphicSkin;
+	var upStrum:NoteGraphicSkin;
+	var rightStrum:NoteGraphicSkin;
+}
+
+typedef NoteGraphicSkin =
+{
+	var frameRate:Int;
+	var pixelFrames:Array<Int>;
+	var animPrefix:String;
 }

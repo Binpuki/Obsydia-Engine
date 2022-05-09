@@ -135,6 +135,8 @@ class PlayState extends MusicBeatState
 	private var keysPressed:Array<Bool> = [false, false, false, false];
 	private var actionsPressed:Map<String, Bool>;
 
+	//Skin shit
+
 	#if desktop
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
