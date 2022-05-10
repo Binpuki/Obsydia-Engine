@@ -13,6 +13,8 @@ class Options
 		SPACE => "dodge"
 	];
 
+	public var downScroll:Bool = true; //Pretty obvious, stoopi
+
 	public function new()
 	{
 

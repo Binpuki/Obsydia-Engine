@@ -31,6 +31,7 @@ import openfl.events.IOErrorEvent;
 import openfl.media.Sound;
 import openfl.net.FileReference;
 import openfl.utils.ByteArray;
+import sprites.Note;
 
 using StringTools;
 

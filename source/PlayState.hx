@@ -1,5 +1,7 @@
 package;
 
+import sprites.StrumNote;
+import sprites.Note.NoteSkin;
 import openfl.Lib;
 import flixel.input.keyboard.FlxKey;
 import lime.ui.KeyModifier;
@@ -46,6 +48,7 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 import lime.ui.Window;
+import sprites.*;
 
 using StringTools;
 
@@ -76,8 +79,8 @@ class PlayState extends MusicBeatState
 
 	private static var prevCamFollow:FlxObject;
 
-	private var strumLineNotes:FlxTypedGroup<FlxSprite>;
-	private var playerStrums:FlxTypedGroup<FlxSprite>;
+	private var strumLineNotes:FlxTypedGroup<StrumNote>;
+	private var playerStrums:FlxTypedGroup<StrumNote>;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -136,6 +139,8 @@ class PlayState extends MusicBeatState
 	private var actionsPressed:Map<String, Bool>;
 
 	//Skin shit
+	public static var skin:String = "default";
+	static var skinMetadata:NoteSkin;
 
 	#if desktop
 	// Discord RPC variables
@@ -152,6 +157,8 @@ class PlayState extends MusicBeatState
 		actionsPressed = [
 			for (value in curOptions.extraControls.iterator()) value => false
 		];
+
+		Note.noteSkin = cast Json.parse(Assets.getText(SkinPaths.skinMetadata(skin, 'metadata')).trim());
 
 		super();
 	}
@@ -708,13 +715,13 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
-		strumLine = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
+		strumLine = new FlxSprite(0, curOptions.downScroll ? FlxG.height - 165 : 50).makeGraphic(FlxG.width, 10);
 		strumLine.scrollFactor.set();
 
-		strumLineNotes = new FlxTypedGroup<FlxSprite>();
+		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 
-		playerStrums = new FlxTypedGroup<FlxSprite>();
+		playerStrums = new FlxTypedGroup<StrumNote>();
 
 		// startCountdown();
 
@@ -743,7 +750,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.fixedTimestep = false;
 
-		healthBarBG = new FlxSprite(0, FlxG.height * 0.9).loadGraphic(Paths.image('healthBar'));
+		healthBarBG = new FlxSprite(0, FlxG.height * (curOptions.downScroll ? 0.1 : 0.9)).loadGraphic(Paths.image('healthBar'));
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);
@@ -1124,6 +1131,7 @@ class PlayState extends MusicBeatState
 
 					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
 					sustainNote.scrollFactor.set();
+					sustainNote.flipY = curOptions.downScroll ? true : false;
 					unspawnNotes.push(sustainNote);
 
 					sustainNote.mustPress = gottaHitNote;
@@ -1162,6 +1170,7 @@ class PlayState extends MusicBeatState
 	{
 		for (i in 0...4)
 		{
+			/*
 			// FlxG.log.add(i);
 			var babyArrow:FlxSprite = new FlxSprite(0, strumLine.y);
 
@@ -1256,6 +1265,20 @@ class PlayState extends MusicBeatState
 			}
 
 			babyArrow.x += ((FlxG.width / 2) * player) + (FlxG.width / 4) - ((Note.swagWidth * 4) / 2);
+
+			strumLineNotes.add(babyArrow);
+			*/
+
+			var babyArrow:StrumNote = new StrumNote(0, Std.int(strumLine.y));
+			babyArrow.loadNoteskin(i, Note.noteSkin);
+			babyArrow.x += ((FlxG.width / 2) * player) + (FlxG.width / 4) - ((Note.swagWidth * 4) / 2);
+			
+			babyArrow.ID = i;
+
+			if (player == 1)
+			{
+				playerStrums.add(babyArrow);
+			}
 
 			strumLineNotes.add(babyArrow);
 		}
@@ -1646,16 +1669,23 @@ class PlayState extends MusicBeatState
 					daNote.active = true;
 				}
 
-				daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+				daNote.y = 
+					!curOptions.downScroll ? //if that
+					(strumLine.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2))) 
+					: //else
+					(strumLine.y + (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
 
 				// i am so fucking sorry for this if condition
 				if (daNote.isSustainNote
 					&& daNote.y + daNote.offset.y <= strumLine.y + Note.swagWidth / 2
 					&& (!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
 				{
-					var swagRect = new FlxRect(0, strumLine.y + Note.swagWidth / 2 - daNote.y, daNote.width * 2, daNote.height * 2);
-					swagRect.y /= daNote.scale.y;
-					swagRect.height -= swagRect.y;
+
+
+					var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
+					//swagRect.y /= daNote.scale.y;
+					swagRect.height = (strumLine.y + (daNote.width / 2) - daNote.y) / daNote.scale.y;
+					swagRect.y = daNote.frameHeight - swagRect.height;
 
 					daNote.clipRect = swagRect;
 				}
@@ -1697,10 +1727,9 @@ class PlayState extends MusicBeatState
 
 				// WIP interpolation shit? Need to fix the pause issue
 				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
-
-				if (daNote.y < -daNote.height)
+				if (daNote.y < -daNote.height && !curOptions.downScroll || daNote.y > FlxG.height + daNote.height && curOptions.downScroll)
 				{
-					if (daNote.tooLate || !daNote.wasGoodHit)
+					if ((daNote.tooLate || !daNote.wasGoodHit) && !daNote.isSustainNote)
 					{
 						health -= 0.0475;
 						vocals.volume = 0;
@@ -2026,15 +2055,15 @@ class PlayState extends MusicBeatState
 
 	private function updatePlayerStrums()
 	{
-		playerStrums.forEach(function(spr:FlxSprite)
+		playerStrums.forEach(function(spr:StrumNote)
 		{
 			if(keysPressed[spr.ID] && spr.animation.curAnim.name != "confirm" && spr.animation.curAnim.name != "pressed")
-				spr.animation.play("pressed", true);
+				spr.playAnim("pressed", true);
 
 			if(!keysPressed[spr.ID])
-				spr.animation.play("static", true);
+				spr.playAnim("static", true);
 
-			spr.centerOffsets();
+			//spr.centerOffsets();
 		});
 	}
 
@@ -2207,7 +2236,7 @@ class PlayState extends MusicBeatState
 			});
 		}
 
-		if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && !up && !down && !right && !left)
+		if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && !keysPressed.contains(true))
 		{
 			if (boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.animation.curAnim.name.endsWith('miss'))
 			{
@@ -2217,9 +2246,10 @@ class PlayState extends MusicBeatState
 
 		
 
+		/*
 		playerStrums.forEach(function(spr:FlxSprite)
 		{
-			/*
+			
 			switch (spr.ID)
 			{
 				case 0:
@@ -2243,7 +2273,7 @@ class PlayState extends MusicBeatState
 					if (rightR)
 						spr.animation.play('static');
 			}
-			*/
+			
 
 			if (spr.animation.curAnim.name == 'confirm' && !curStage.startsWith('school'))
 			{
@@ -2254,6 +2284,7 @@ class PlayState extends MusicBeatState
 			else
 				spr.centerOffsets();
 		});
+		*/
 		
 	}
 
@@ -2352,11 +2383,11 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim('singRIGHT', true);
 			}
 
-			playerStrums.forEach(function(spr:FlxSprite)
+			playerStrums.forEach(function(spr:StrumNote)
 			{
 				if (Math.abs(note.noteData) == spr.ID)
 				{
-					spr.animation.play('confirm', true);
+					spr.playAnim('confirm', true);
 				}
 			});
 

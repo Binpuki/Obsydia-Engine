@@ -1,4 +1,4 @@
-package;
+package sprites;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -22,7 +22,10 @@ class Note extends FlxSprite
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
+
 	public var prevNote:Note;
+	public var parentNote:Note;
+	public var wholeNote:Array<Note> = []; //Represents the entire note, arrow and sus
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -39,11 +42,28 @@ class Note extends FlxSprite
 	{
 		super();
 
-		if (prevNote == null)
-			prevNote = this;
-
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
+
+		if (prevNote == null)
+		{
+			prevNote = this;
+			parentNote = this;
+			wholeNote.push(this);
+		}
+		else
+		{
+			if (!prevNote.isSustainNote)
+			{
+				parentNote = prevNote;
+			}
+			else
+			{
+				parentNote = prevNote.parentNote;
+			}
+
+			parentNote.wholeNote.push(this);
+		}
 
 		x += (FlxG.width / 4) - ((Note.swagWidth * 4) / 2);
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -52,6 +72,7 @@ class Note extends FlxSprite
 
 		this.noteData = noteData;
 
+		/*
 		var daStage:String = PlayState.curStage;
 
 		switch (daStage)
@@ -104,22 +125,9 @@ class Note extends FlxSprite
 				updateHitbox();
 				antialiasing = true;
 		}
+		*/
 
-		switch (noteData)
-		{
-			case 0:
-				x += swagWidth * 0;
-				animation.play('purpleScroll');
-			case 1:
-				x += swagWidth * 1;
-				animation.play('blueScroll');
-			case 2:
-				x += swagWidth * 2;
-				animation.play('greenScroll');
-			case 3:
-				x += swagWidth * 3;
-				animation.play('redScroll');
-		}
+		loadNoteskin();
 
 		// trace(prevNote);
 
@@ -130,17 +138,7 @@ class Note extends FlxSprite
 
 			x += width / 2;
 
-			switch (noteData)
-			{
-				case 2:
-					animation.play('greenholdend');
-				case 3:
-					animation.play('redholdend');
-				case 1:
-					animation.play('blueholdend');
-				case 0:
-					animation.play('purpleholdend');
-			}
+			animation.play('holdend', true);
 
 			updateHitbox();
 
@@ -151,6 +149,7 @@ class Note extends FlxSprite
 
 			if (prevNote.isSustainNote)
 			{
+				/*
 				switch (prevNote.noteData)
 				{
 					case 0:
@@ -162,6 +161,9 @@ class Note extends FlxSprite
 					case 3:
 						prevNote.animation.play('redhold');
 				}
+				*/
+
+				prevNote.animation.play('hold', true);
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
@@ -169,6 +171,60 @@ class Note extends FlxSprite
 			}
 		}
 	}
+
+	function loadNoteskin()
+	{
+		if (noteSkin == null)
+        {
+            return;
+        }
+
+        var shit:NoteAnimation = null;
+
+        switch (noteData)
+        {
+            case 0:
+                shit = noteSkin.left;
+            case 1:
+                shit = noteSkin.down;
+            case 2:
+                shit = noteSkin.up;
+            case 3:
+                shit = noteSkin.right;
+        }
+
+		if (shit == null) return;
+
+		switch (noteSkin.actsLike)
+        {
+            case 'pixel':
+                loadGraphic(SkinPaths.skinImage(PlayState.skin, noteSkin.notePath[0], noteSkin.notePath[1]), true, noteSkin.noteGrid[0], noteSkin.noteGrid[1]);
+                animation.add('scroll', shit.scrollAnim.pixelFrames, shit.scrollAnim.frameRate);
+				animation.add('hold', shit.holdAnim.pixelFrames, shit.holdAnim.frameRate, false);
+				animation.add('holdend', shit.holdEndAnim.pixelFrames, shit.holdEndAnim.frameRate, false);
+            default:
+				frames = FlxAtlasFrames.fromSparrow(SkinPaths.skinImage(PlayState.skin, noteSkin.notePath[0], noteSkin.notePath[1]), SkinPaths.skinSparrow(PlayState.skin, noteSkin.notePath[0], noteSkin.notePath[1]));
+                animation.addByPrefix('scroll', shit.scrollAnim.animPrefix, shit.scrollAnim.frameRate);
+                animation.addByPrefix('hold', shit.holdAnim.animPrefix, shit.holdAnim.frameRate, false);
+                animation.addByPrefix('holdend', shit.holdEndAnim.animPrefix, shit.holdEndAnim.frameRate, false);
+        }
+
+        antialiasing = shit.scrollAnim.antialiasing;
+
+        animation.play('scroll', true);
+        updateHitbox();
+        setGraphicSize(Std.int(width * noteSkin.scale));
+        updateHitbox();
+
+        //this.strumScale = skin.scale;
+
+        positionSelf();
+	}
+
+	public function positionSelf() //just in case you wanna mess with this for some reason idfk
+    {
+        x += Note.swagWidth * noteData;
+    }
 
 	override function update(elapsed:Float)
 	{
@@ -184,7 +240,12 @@ class Note extends FlxSprite
 				canBeHit = false;
 
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
-				tooLate = true;
+			{
+				for (note in parentNote.wholeNote)
+				{
+					note.tooLate = true;
+				}
+			}
 		}
 		else
 		{
@@ -204,22 +265,43 @@ class Note extends FlxSprite
 
 typedef NoteSkin =
 {
-	var notePath:String;
-	var left:NoteGraphicSkin;
-	var down:NoteGraphicSkin;
-	var up:NoteGraphicSkin;
-	var right:NoteGraphicSkin;
+	var actsLike:String;
+	var scale:Float;
 
-	var strumPath:String;
-	var leftStrum:NoteGraphicSkin;
-	var downStrum:NoteGraphicSkin;
-	var upStrum:NoteGraphicSkin;
-	var rightStrum:NoteGraphicSkin;
+	var notePath:Array<String>;
+	var noteGrid:Array<Int>;
+	var left:NoteAnimation;
+	var down:NoteAnimation;
+	var up:NoteAnimation;
+	var right:NoteAnimation;
+
+	var strumPath:Array<String>;
+	var strumGrid:Array<Int>;
+	var leftStrum:StrumGraphicSkin;
+	var downStrum:StrumGraphicSkin;
+	var upStrum:StrumGraphicSkin;
+	var rightStrum:StrumGraphicSkin;
 }
 
-typedef NoteGraphicSkin =
+typedef NoteAnimation =
+{
+	var scrollAnim:BasicAnimation;
+	var holdAnim:BasicAnimation;
+	var holdEndAnim:BasicAnimation;
+}
+
+typedef StrumGraphicSkin = 
+{
+	var staticAnim:BasicAnimation;
+	var pressedAnim:BasicAnimation;
+	var confirmAnim:BasicAnimation;
+}
+
+typedef BasicAnimation =
 {
 	var frameRate:Int;
 	var pixelFrames:Array<Int>;
 	var animPrefix:String;
+	var antialiasing:Bool;
+	var offset:Array<Int>;
 }

@@ -5,6 +5,10 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 
+#if cpp
+import sys.FileSystem;
+#end
+
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
@@ -114,4 +118,29 @@ class Paths
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
+
+	public static function doesItExist(path:String)
+    {
+        if (OpenFlAssets.exists(path))
+            return "openfl";
+
+        #if cpp
+        if (FileSystem.exists(cutPath(path)))
+            return "cpp";
+        #end
+
+        return null; // :/ bruh
+    }
+
+    #if cpp
+    public static function cutPath(OpenFLPath:String)
+	{
+		if (OpenFLPath.split('').contains(':'))
+		{
+			return OpenFLPath.substr(OpenFLPath.indexOf(':'));
+		}
+
+		return OpenFLPath;
+	}
+    #end
 }

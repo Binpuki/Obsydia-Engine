@@ -1,0 +1,174 @@
+{
+	"actsLike": "default",
+	"scale": 0.7,
+	"notePath": ["NOTE_assets", "preload"],
+	"left":
+	{
+		"scrollAnim":
+		{
+			"animPrefix": "purple0",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdAnim":
+		{
+			"animPrefix": "purple hold piece",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdEndAnim":
+		{
+			"animPrefix": "pruple end hold",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"down":
+	{
+		"scrollAnim":
+		{
+			"animPrefix": "blue0",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdAnim":
+		{
+			"animPrefix": "blue hold piece",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdEndAnim":
+		{
+			"animPrefix": "blue hold end",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"up":
+	{
+		"scrollAnim":
+		{
+			"animPrefix": "green0",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdAnim":
+		{
+			"animPrefix": "green hold piece",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdEndAnim":
+		{
+			"animPrefix": "green hold end",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"right":
+	{
+		"scrollAnim":
+		{
+			"animPrefix": "red0",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdAnim":
+		{
+			"animPrefix": "red hold piece",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"holdEndAnim":
+		{
+			"animPrefix": "red hold end",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"strumPath": ["NOTE_assets", "preload"],
+	"leftStrum":
+	{
+		"staticAnim":
+		{
+			"animPrefix": "arrowLEFT",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"pressedAnim":
+		{
+			"animPrefix": "left press",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"confirmAnim":
+		{
+			"animPrefix": "left confirm",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"downStrum":
+	{
+		"staticAnim":
+		{
+			"animPrefix": "arrowDOWN",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"pressedAnim":
+		{
+			"animPrefix": "down press",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"confirmAnim":
+		{
+			"animPrefix": "down confirm",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"upStrum":
+	{
+		"staticAnim":
+		{
+			"animPrefix": "arrowUP",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"pressedAnim":
+		{
+			"animPrefix": "up press",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"confirmAnim":
+		{
+			"animPrefix": "up confirm",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	},
+	"rightStrum":
+	{
+		"staticAnim":
+		{
+			"animPrefix": "arrowRIGHT",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"pressedAnim":
+		{
+			"animPrefix": "right press",
+			"frameRate": 24,
+			"antialiasing": true
+		},
+		"confirmAnim":
+		{
+			"animPrefix": "right confirm",
+			"frameRate": 24,
+			"antialiasing": true
+		}
+	}
+}
