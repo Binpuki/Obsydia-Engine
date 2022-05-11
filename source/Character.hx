@@ -9,6 +9,8 @@ using StringTools;
 
 class Character extends FlxSprite
 {
+	public static var DIRECTIONS(default, null):Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
 

@@ -28,7 +28,11 @@ class Note extends FlxSprite
 	public var wholeNote:Array<Note> = []; //Represents the entire note, arrow and sus
 
 	public var sustainLength:Float = 0;
-	public var isSustainNote:Bool = false;
+	public var isSustainNote(default, null):Bool = false;
+	public var isSustainEnd(default, null):Bool = false;
+
+	public var beingHit:Bool = false;
+	public var alreadyMissed:Bool = false;
 
 	public var noteScore:Float = 1;
 
@@ -47,7 +51,6 @@ class Note extends FlxSprite
 
 		if (prevNote == null)
 		{
-			prevNote = this;
 			parentNote = this;
 			wholeNote.push(this);
 		}
@@ -139,6 +142,7 @@ class Note extends FlxSprite
 			x += width / 2;
 
 			animation.play('holdend', true);
+			isSustainEnd = true;
 
 			updateHitbox();
 
@@ -149,21 +153,8 @@ class Note extends FlxSprite
 
 			if (prevNote.isSustainNote)
 			{
-				/*
-				switch (prevNote.noteData)
-				{
-					case 0:
-						prevNote.animation.play('purplehold');
-					case 1:
-						prevNote.animation.play('bluehold');
-					case 2:
-						prevNote.animation.play('greenhold');
-					case 3:
-						prevNote.animation.play('redhold');
-				}
-				*/
-
 				prevNote.animation.play('hold', true);
+				prevNote.isSustainEnd = false;
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
@@ -209,7 +200,7 @@ class Note extends FlxSprite
                 animation.addByPrefix('holdend', shit.holdEndAnim.animPrefix, shit.holdEndAnim.frameRate, false);
         }
 
-        antialiasing = shit.scrollAnim.antialiasing;
+        antialiasing = shit.scrollAnim.antialiasing; //AHHHHHHHHHHHHHHHHH
 
         animation.play('scroll', true);
         updateHitbox();
@@ -239,12 +230,14 @@ class Note extends FlxSprite
 			else
 				canBeHit = false;
 
-			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit)
+			//Never hit the note at all lol
+			var didntHitEver:Bool = strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit && !isSustainNote;
+
+			//Let go too early (doesn't count for sustain ends because i think thats bullshit)
+			//var letGoTooEarly:Bool = !isSustainEnd && strumTime < Conductor.songPosition && isSustainNote && !beingHit && !wasGoodHit;
+			if (didntHitEver)
 			{
-				for (note in parentNote.wholeNote)
-				{
-					note.tooLate = true;
-				}
+				miss();
 			}
 		}
 		else
@@ -259,6 +252,19 @@ class Note extends FlxSprite
 		{
 			if (alpha > 0.3)
 				alpha = 0.3;
+		}
+	}
+
+	public function miss()
+	{
+		for (note in parentNote.wholeNote)
+		{
+			if (!parentNote.alreadyMissed)
+			{
+				PlayState.currentSession.noteMiss(noteData);
+			}
+			note.alreadyMissed = true;
+			note.tooLate = true;
 		}
 	}
 }

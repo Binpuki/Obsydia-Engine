@@ -14,6 +14,7 @@ class Options
 	];
 
 	public var downScroll:Bool = true; //Pretty obvious, stoopi
+	public var ghostTapping:Bool = true; //If you want to not miss when there's no notes that are hittable
 
 	public function new()
 	{

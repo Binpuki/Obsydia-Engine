@@ -1,5 +1,6 @@
 package;
 
+import sprites.HealthIcon;
 #if desktop
 import Discord.DiscordClient;
 #end

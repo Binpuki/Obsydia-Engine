@@ -1,5 +1,6 @@
 package;
 
+import sprites.HealthIcon;
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;

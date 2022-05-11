@@ -9,7 +9,7 @@ using StringTools;
 
 class Boyfriend extends Character
 {
-	public var stunned:Bool = false;
+	public var stunned(default, set):Bool = false;
 
 	public function new(x:Float, y:Float, ?char:String = 'bf')
 	{
@@ -26,18 +26,42 @@ class Boyfriend extends Character
 			}
 			else
 				holdTimer = 0;
-
-			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
-			{
-				playAnim('idle', true, false, 10);
-			}
-
-			if (animation.curAnim.name == 'firstDeath' && animation.curAnim.finished)
-			{
-				playAnim('deathLoop');
-			}
 		}
 
 		super.update(elapsed);
+	}
+
+	function frameUpdate(name:String, frameNumber:Int, frameIndex:Int)
+	{
+		//rjgehfjwds
+	}
+
+	function finishAnim(name:String)
+	{
+		switch (name)
+		{
+			case 'firstDeath':
+				playAnim('deathLoop');
+		}
+
+		/*
+
+		if (name.endsWith('miss') && !debugMode)
+		{
+			stunned = false;
+			playAnim('idle', true, false, 10);
+		}
+		*/
+	}
+
+	function set_stunned(value:Bool):Bool {
+		stunned = value;
+
+		new FlxTimer().start(5 / 60, function(tmr:FlxTimer)
+		{
+			stunned = false;
+		});
+
+		return value;
 	}
 }

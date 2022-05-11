@@ -1,5 +1,7 @@
 package;
 
+import openfl.net.URLRequest;
+import openfl.media.Sound;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
