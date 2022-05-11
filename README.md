@@ -1,4 +1,15 @@
-# Friday Night Funkin
+# PLEASE INSTALL THE LATEST VERSION OF HAXE
+# Obsydia Engine
+Obsydia Engine is just a fork of the original Friday Night Funkin' with some extra features.
+(im not really done with the engine yet DONT USE IT RN!!!)
+
+Obsydia Engine as of right now includes extra features such as:
+- Better inputs
+- Downscroll
+- Custom arrow skins
+- Reworked hold note system (means that you don't get like 1000 misses if you miss a hold note!!!)
+
+# OG FNF
 
 This is the repository for Friday Night Funkin, a game originally made for Ludum Dare 47 "Stuck In a Loop".
 
@@ -10,7 +21,7 @@ IF YOU MAKE A MOD AND DISTRIBUTE A MODIFIED / RECOMPILED VERSION, YOU MUST OPEN 
 
 ## Credits / shoutouts
 
-- [ninjamuffin99 (me!)](https://twitter.com/ninja_muffin99) - Programmer
+- [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
 - [PhantomArcade3K](https://twitter.com/phantomarcade3k) and [Evilsk8r](https://twitter.com/evilsk8r) - Art
 - [Kawaisprite](https://twitter.com/kawaisprite) - Musician
 
