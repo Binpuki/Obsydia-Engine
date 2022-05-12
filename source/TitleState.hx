@@ -1,5 +1,6 @@
 package;
 
+import sys.FileSystem;
 #if desktop
 import Discord.DiscordClient;
 import sys.thread.Thread;
@@ -132,7 +133,8 @@ class TitleState extends MusicBeatState
 			// music.loadStream(Paths.music('freakyMenu'));
 			// FlxG.sound.list.add(music);
 			// music.play();
-			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+			trace(FileSystem.absolutePath(""));
+			FlxG.sound.music = new FlxSound().loadStream(Paths.music('freakyMenu'), true).play();
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
 		}
@@ -279,6 +281,7 @@ class TitleState extends MusicBeatState
 			#end
 
 			titleText.animation.play('press');
+			titleText.centerOffsets();
 
 			FlxG.camera.flash(FlxColor.WHITE, 1);
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
