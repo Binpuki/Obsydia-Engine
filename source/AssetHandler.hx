@@ -1,3 +1,4 @@
+import openfl.utils.Future;
 import flixel.graphics.FlxGraphic;
 import openfl.display.BitmapData;
 #if cpp
@@ -5,7 +6,8 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
-import openfl.Assets;
+import openfl.Assets as OpenFLAssets;
+import lime.utils.Assets as LimeAssets;
 
 class AssetHandler
 {
@@ -39,8 +41,17 @@ class AssetHandler
     #if cpp
         File.getContent;
     #else
-        Assets.getText;
+        LimeAssets.getText;
     #end
+
+    public static function grabTextAsync(path:String):Future<String>
+    {
+        #if cpp
+        return Future.withValue(File.getContent(path));
+        #else
+        return LimeAssets.loadText(path);
+        #end
+    }
 
     //public static var imageGrabber:String->Void =
 }

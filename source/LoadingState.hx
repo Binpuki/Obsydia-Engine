@@ -17,6 +17,12 @@ using StringTools;
 class LoadingState extends MusicBeatState
 {
     var imagePaths:Array<String> = [Paths.image('num1')];
+    var imageIdx:Int = 0;
+    var imageTotal:Int = 0;
+
+    var xmlPaths:Array<String> = [Paths.file('images/characters/BOYFRIEND.xml', TEXT, 'shared')];
+    var xmlIdx:Int = 0;
+    var xmlTotal:Int = 0;
     
     var percentShit:Array<Int> = [0, 0];
     var percent:Float;
@@ -32,11 +38,14 @@ class LoadingState extends MusicBeatState
         percentShit[1] = (imagePaths.length) + 2;
         percent = percentShit[0] / percentShit[1];
 
+        imageTotal = imagePaths.length;
+        xmlTotal = xmlPaths.length;
+
         percentBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 20, FlxColor.WHITE);
         add(percentBar);
 
-        loadImages();
-        loadSongs();
+        loadImage(imageIdx);
+        //loadSongs();
     }
 
     override function update(elapsed:Float)
@@ -64,21 +73,42 @@ class LoadingState extends MusicBeatState
         }
     }
 
-    function loadImages()
+    function loadImage(idx:Int)
     {
-        for (path in imagePaths) //LOAD IMAGES grjfeioarjiogijofeaijo
-        {
-            BitmapData.loadFromFile(path).onComplete(function(bitmap){ //OK FIRST MAKE BITMAP
-                AssetHandler.loadAsset(path, bitmap); //PUT THE THING IN THE THING
-                objectFinishLoading();
-            });
-        }
+        var path = imagePaths[idx];
+        var cutPath = Paths.cutPath(path);
+
+        BitmapData.loadFromFile(cutPath).onComplete(function(bitmap){ //OK FIRST MAKE BITMAP
+            AssetHandler.loadAsset(path, bitmap); //PUT THE THING IN THE THING
+            objectFinishLoading();
+            imageIdx++;
+            
+            if (imageIdx < imageTotal)
+            {
+                loadImage(imageIdx);
+            }
+        });
+    }
+
+    function loadXML(idx:Int)
+    {
+        var path = xmlPaths[idx];
+        var cutPath = Paths.cutPath(path);
+
+        AssetHandler.grabTextAsync(cutPath).onComplete(function(xmlShit){
+            AssetHandler.loadAsset(path, xmlShit); //PUT THE THING IN THE THING
+            objectFinishLoading();
+            xmlIdx++;
+            
+            if (xmlIdx < xmlTotal)
+            {
+                loadXML(xmlIdx);
+            }
+        });
     }
 
     function loadSongs()
     {
-        var songPaths:Array<String> = [Paths.inst(PlayState.SONG.song), Paths.voices(PlayState.SONG.song)];
-
         if (PlayState.inst != null) {PlayState.inst.destroy();  PlayState.inst = null;}
         if (PlayState.vocals != null) {PlayState.vocals.destroy();  PlayState.vocals = null;}
 
