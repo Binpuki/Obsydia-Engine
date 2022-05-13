@@ -65,8 +65,8 @@ class PlayState extends MusicBeatState
 
 	var halloweenLevel:Bool = false;
 
-	private var inst:FlxSound;
-	private var vocals:FlxSound;
+	public static var inst:FlxSound;
+	public static var vocals:FlxSound;
 
 	private var dad:Character;
 	private var gf:Character;
