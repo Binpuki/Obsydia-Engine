@@ -1,5 +1,6 @@
 package;
 
+import flixel.system.FlxSound;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.transition.FlxTransitionableState;
@@ -15,6 +16,8 @@ class MusicBeatState extends FlxUIState
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
 	private var controls(get, never):Controls;
+
+	public static var music:FlxSound;
 
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;

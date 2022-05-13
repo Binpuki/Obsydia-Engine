@@ -1,11 +1,44 @@
 package;
 
+import lime.utils.Assets;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+#if cpp
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 using StringTools;
+
+typedef CharacterJSON = 
+{
+	var spriteSheet:String;
+	var anims:Array<AnimationData>;
+	var danceEveryBeat:Bool;
+	var antialiasing:Bool;
+	var scale:Float;
+	var flipX:Bool;
+
+	var iconName:String;
+	var iconColor:Int;
+
+	var camPos:Array<Float>;
+	var charPos:Array<Float>;
+	
+	var singDur:Float; //dad var lol
+}
+
+typedef AnimationData = //the complicated ver lol
+{
+	var frameRate:Int;
+	var name:String;
+	var animPrefix:String;
+	var indices:Array<Int>;
+	var offset:Array<Int>;
+	var looped:Bool;
+}
 
 class Character extends FlxSprite
 {
@@ -497,6 +530,9 @@ class Character extends FlxSprite
 				addOffset("singDOWN-alt", -30, -27);
 
 				playAnim('idle');
+
+			default:
+				
 		}
 
 		dance();
@@ -524,9 +560,41 @@ class Character extends FlxSprite
 		}
 	}
 
+	/*
+	function jsonShit()
+	{
+		var exists:Bool = false;
+
+		var fileGetter:String->Void =
+		#if cpp
+			File.getContent;
+		#else
+			Assets.getText;
+		#end
+
+		var fileChecker
+
+		if (Assets.exists(Paths.image(curCharacter, 'characters')))
+		{
+			exists = true;
+			fileGetter = Assets.getText;
+		}
+
+		#if cpp
+		if (FileSystem.exists(Paths.cutPath(Paths.image(curCharacter, 'characters'))))
+		{
+			exists = true;
+			fileGetter = File.getContent;
+		}
+		#end
+
+
+	}
+	*/
+
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+		if (!isPlayer)
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 			{

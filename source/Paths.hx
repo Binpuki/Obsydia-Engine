@@ -86,10 +86,11 @@ class Paths
 
 	inline static public function music(key:String, ?library:String)
 	{
-		var bleh = getPath('music/$key.$SOUND_EXT', MUSIC, library);
+		//var bleh = getPath('music/$key.$SOUND_EXT', MUSIC, library);
 
-		trace(bleh.substr(bleh.indexOf(':') + 1));
-		return bleh.substr(bleh.indexOf(':') + 1);
+		//trace(bleh.substr(bleh.indexOf(':') + 1));
+		//return bleh.substr(bleh.indexOf(':') + 1);
+		return 'assets/music/$key.$SOUND_EXT';
 	}
 
 	inline static public function voices(song:String)

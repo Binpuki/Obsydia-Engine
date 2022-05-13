@@ -91,7 +91,10 @@ class TitleState extends MusicBeatState
 		#else
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
-			startIntro();
+			//Paths.music('freakyMenu')
+			FlxG.sound.music = new FlxSound().loadStream(Paths.music('freakyMenu'), true, false, null, startIntro);
+			FlxG.sound.music.volume = 0;
+			FlxG.sound.music.persist = true;
 		});
 		#end
 
@@ -133,8 +136,8 @@ class TitleState extends MusicBeatState
 			// music.loadStream(Paths.music('freakyMenu'));
 			// FlxG.sound.list.add(music);
 			// music.play();
-			trace(FileSystem.absolutePath(""));
-			FlxG.sound.music = new FlxSound().loadStream(Paths.music('freakyMenu'), true).play();
+
+			FlxG.sound.music.play();
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
 		}

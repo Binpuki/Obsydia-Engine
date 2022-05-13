@@ -806,16 +806,6 @@ class PlayState extends MusicBeatState
 					schoolIntro(doof);
 				case 'thorns':
 					schoolIntro(doof);
-				default:
-					startCountdown();
-			}
-		}
-		else
-		{
-			switch (curSong.toLowerCase())
-			{
-				default:
-					startCountdown();
 			}
 		}
 
@@ -1041,6 +1031,17 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
+	var instLoaded:Bool = true;
+	var vocalsLoaded:Bool = true;
+
+	private function shouldCountdown()
+	{
+		if (instLoaded && vocalsLoaded)
+		{
+			startCountdown();
+		}
+	}
+
 	var debugNum:Int = 0;
 
 	private function generateSong(dataPath:String):Void
@@ -1052,13 +1053,27 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
-		inst = new FlxSound().loadStream(Paths.inst(PlayState.SONG.song), false, true, endSong);
+		inst = new FlxSound().loadStream(Paths.inst(PlayState.SONG.song), false, true, endSong, function()
+		{
+			instLoaded = true;
+			shouldCountdown();
+		});
 		FlxG.sound.list.add(inst);
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadStream(Paths.voices(PlayState.SONG.song), false, true);
+		{
+			vocals = new FlxSound().loadStream(Paths.voices(PlayState.SONG.song), false, true, null, function()
+			{
+				vocalsLoaded = true;
+				shouldCountdown();
+			});
+		}
 		else
+		{
 			vocals = new FlxSound();
+			vocalsLoaded = true;
+			shouldCountdown();
+		}
 
 		FlxG.sound.list.add(vocals);
 
