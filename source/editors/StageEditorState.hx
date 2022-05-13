@@ -12,5 +12,7 @@ class StageEditorState extends MusicBeatState
     override function create()
     {
         super.create();
+
+        //curStage
     }
 }
