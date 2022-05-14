@@ -150,7 +150,7 @@ class CoolUtil
         return FlxKey.NONE;
     }
 
-    public static function nullFloatToFloat(float:Null<Float>)
+    public static function nullFloatToFloat(float:Null<Float>):Float
     {
         return Std.parseFloat(Std.string(float));
     }

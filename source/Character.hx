@@ -67,7 +67,7 @@ class Character extends FlxSprite
 		{
 			case 'gf':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('GF_assets');
+				tex = Paths.getSparrowAtlas('GF_assets', 'shared');
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -159,7 +159,7 @@ class Character extends FlxSprite
 
 			case 'dad':
 				// DAD ANIMATION LOADING CODE
-				tex = Paths.getSparrowAtlas('DADDY_DEAREST');
+				tex = Paths.getSparrowAtlas('DADDY_DEAREST', 'shared');
 				frames = tex;
 				animation.addByPrefix('idle', 'Dad idle dance', 24);
 				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
@@ -302,7 +302,10 @@ class Character extends FlxSprite
 				flipX = true;
 
 			case 'bf':
-				var tex = Paths.getSparrowAtlas('BOYFRIEND');
+				trace(AssetHandler.loadedAssets[Paths.image('BOYFRIEND', 'shared')]);
+				trace(AssetHandler.loadedAssets[Paths.file('images/BOYFRIEND.xml', TEXT, 'shared')]);
+				var tex = FlxAtlasFrames.fromSparrow(AssetHandler.loadedAssets[Paths.image('BOYFRIEND', 'shared')], AssetHandler.loadedAssets[Paths.file('images/BOYFRIEND.xml', TEXT, 'shared')]);
+				//Paths.getSparrowAtlas('BOYFRIEND');
 				frames = tex;
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -531,7 +534,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 
-			default:
+			//default:
 				
 		}
 

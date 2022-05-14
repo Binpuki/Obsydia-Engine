@@ -15,4 +15,6 @@ class StageEditorState extends MusicBeatState
 
         //curStage
     }
+
+    
 }

@@ -16,26 +16,32 @@ using StringTools;
 
 class LoadingState extends MusicBeatState
 {
-    var imagePaths:Array<String> = [Paths.image('num1')];
+    var imagePaths:Array<String> = [
+        Paths.image('BOYFRIEND', 'shared')
+    ];
     var imageIdx:Int = 0;
     var imageTotal:Int = 0;
 
-    var xmlPaths:Array<String> = [Paths.file('images/characters/BOYFRIEND.xml', TEXT, 'shared')];
+    var xmlPaths:Array<String> = [
+        Paths.file('images/BOYFRIEND.xml', TEXT, 'shared')
+    ];
     var xmlIdx:Int = 0;
     var xmlTotal:Int = 0;
     
     var percentShit:Array<Int> = [0, 0];
     var percent:Float;
 
+    var finished:Bool = false;
+
     var percentBar:FlxSprite;
 
     override function create()
     {
-        getStageImages('a');
+        //getStageImages('a');
 
         super.create();
 
-        percentShit[1] = (imagePaths.length) + 2;
+        percentShit[1] = (imagePaths.length) + (xmlPaths.length) + 2;
         percent = percentShit[0] / percentShit[1];
 
         imageTotal = imagePaths.length;
@@ -48,10 +54,19 @@ class LoadingState extends MusicBeatState
         //loadSongs();
     }
 
+    var transitioning:Bool = false;
+
     override function update(elapsed:Float)
     {
         percent = percentShit[0] / percentShit[1];
         percentBar.scale.x = percent;
+
+        if (finished && !transitioning)
+        {
+            transitioning = true;
+
+            FlxG.switchState(new PlayState());
+        }
     }
 
     inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
@@ -87,6 +102,10 @@ class LoadingState extends MusicBeatState
             {
                 loadImage(imageIdx);
             }
+            else
+            {
+                loadXML(xmlIdx);
+            }
         });
     }
 
@@ -104,6 +123,10 @@ class LoadingState extends MusicBeatState
             {
                 loadXML(xmlIdx);
             }
+            else
+            {
+                loadSongs();
+            }
         });
     }
 
@@ -120,5 +143,10 @@ class LoadingState extends MusicBeatState
     {
         percentShit[0]++;
         trace(percent);
+
+        if (percentShit[0] == percentShit[1])
+        {
+            finished = true;
+        }
     }
 }

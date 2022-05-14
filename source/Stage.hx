@@ -86,9 +86,9 @@ class Stage extends FlxTypedGroup<FlxBasic>
                 var doubleDance:Bool = true;
                 var firstAnim:FlxAnimation = obj.animation.getByName('danceLeft');
                 var firstAnimName:String = 'danceLeft';
-                var firstAnimData:StageAnimData;
+                var firstAnimData:StageAnimData = null;
                 var secondAnim:FlxAnimation;
-                var secondAnimData:StageAnimData;
+                var secondAnimData:StageAnimData = null;
 
                 if (ifAnimsExist)
                 {
@@ -140,8 +140,8 @@ class Stage extends FlxTypedGroup<FlxBasic>
                     flipX: obj.flipX,
                     flipY: obj.flipY,
                     animated: ifAnimsExist,
-                    firstAnim: ifAnimsExist ? firstAnimData : null,
-                    secondAnim: ifAnimsExist ? secondAnimData : null,
+                    firstAnim: ifAnimsExist && firstAnimData != null ? firstAnimData : null,
+                    secondAnim: ifAnimsExist && doubleDance && secondAnimData != null ? secondAnimData : null,
                 }
 
                 dataLayer.push(spriteData);
@@ -232,16 +232,16 @@ class Stage extends FlxTypedGroup<FlxBasic>
 
                 //For every lol
                 poop.name = sprite.name;
-                poop.alpha = sprite.alpha != null ? CoolUtil.nullFloatToFloat(sprite.alpha) : 1;
+                poop.alpha = sprite.alpha;
                 poop.visible = sprite.visible != null ? sprite.visible : true;
 
-                var scrollX:Float = sprite.scrollFactor[0] != null ? CoolUtil.nullFloatToFloat(sprite.scrollFactor[0]) : 1;
-                var scrollY:Float = sprite.scrollFactor[1] != null ? CoolUtil.nullFloatToFloat(sprite.scrollFactor[1]) : 1;
+                var scrollX:Float = sprite.scrollFactor[0];
+                var scrollY:Float = sprite.scrollFactor[1];
 
                 poop.scrollFactor.set(scrollX, scrollY);
 
-                var scaleX:Float = sprite.scale[0] != null ? CoolUtil.nullFloatToFloat(sprite.scale[0]) : 1;
-                var scaleY:Float = sprite.scale[1] != null ? CoolUtil.nullFloatToFloat(sprite.scale[1]) : 1;
+                var scaleX:Float = sprite.scale[0];
+                var scaleY:Float = sprite.scale[1];
 
                 poop.scale.set(scaleX, scaleY);
 
@@ -284,8 +284,8 @@ typedef StageObject =
 
     var scale:Array<Float>;
     var antialiasing:Bool;
-    @:optional var scrollFactor:Array<Float>;
-    @:optional var alpha:Float;
+    var scrollFactor:Array<Float>;
+    var alpha:Float;
     @:optional var visible:Bool;
 
     @:optional var flipX:Bool;
